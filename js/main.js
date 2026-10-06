@@ -48,7 +48,7 @@ function buildHeader(){
           <span>0552144999</span>
         </a>
         <button class="lang-btn" id="langBtn" data-i18n="lang.switch">EN</button>
-        <a href="admin.html" class="btn-login" data-i18n="header.login">تسجيل الدخول</a>
+        <button type="button" class="btn-login" data-i18n="header.login">تسجيل الدخول</button>
       </div>
     </nav>
   </header>
