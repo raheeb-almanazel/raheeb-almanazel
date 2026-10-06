@@ -23,6 +23,10 @@ function buildHeader(){
   host.innerHTML = `
   <header class="site">
     <nav class="nav">
+      <a class="brand" href="index.html">
+        <img src="logo.png" alt="رحيب المنازل" class="brand-logo">
+        <span class="name">رحيب المنازل<small data-i18n="brand.tagline">للتطوير العقاري</small></span>
+      </a>
       <button class="nav-toggle" id="navToggle" aria-label="فتح القائمة">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <line x1="3" y1="6" x2="21" y2="6"/>
@@ -30,10 +34,6 @@ function buildHeader(){
           <line x1="3" y1="18" x2="21" y2="18"/>
         </svg>
       </button>
-      <a class="brand" href="index.html">
-        <img src="logo.png" alt="رحيب المنازل" class="brand-logo">
-        <span class="name">رحيب المنازل<small data-i18n="brand.tagline">للتطوير العقاري</small></span>
-      </a>
       <div class="nav-links-desktop">
         <a href="index.html" data-i18n="nav.home">الرئيسية</a>
         <a href="index.html#projects" data-i18n="nav.projects">مشاريعنا</a>
