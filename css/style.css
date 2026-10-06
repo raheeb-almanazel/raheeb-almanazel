@@ -216,7 +216,7 @@ header.site{
   .nav-links-desktop,
   .nav-right-desktop{ display:none; }
   .nav-toggle{ display:flex; }
-  .brand{ margin-inline-start:auto; }
+  .brand{ margin-inline-end:auto; }
   .brand-logo{ height:46px; }
   .brand .name{ font-size:1rem; }
   .brand .name small{ font-size:.65rem; }
