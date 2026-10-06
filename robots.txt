@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://raheebalmanazel.com/sitemap.xml
