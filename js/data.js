@@ -12,6 +12,7 @@ const STAGES = [
   { value: 'sale',      ar: 'مرحلة البيع',    en: 'For Sale' },
   { value: 'finishing', ar: 'مرحلة التشطيب',  en: 'Finishing' },
   { value: 'structure', ar: 'مرحلة العظم',    en: 'Structure' }
+  { value: 'sold',      ar: 'مباعة',          en: 'Sold' }
 ];
 
 /* ========== كاش داخلي ========== */
