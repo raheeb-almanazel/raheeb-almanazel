@@ -453,6 +453,7 @@ async function initAdmin(){
               <option value="sale" ${pr.stage === 'sale' ? 'selected' : ''}>مرحلة البيع</option>
               <option value="finishing" ${pr.stage === 'finishing' ? 'selected' : ''}>مرحلة التشطيب</option>
               <option value="structure" ${pr.stage === 'structure' ? 'selected' : ''}>مرحلة العظم</option>
+              <option value="sold" ${pr.stage === 'sold' ? 'selected' : ''}>مباعة</option>
             </select>
           </div>
           <div class="field">
