@@ -31,6 +31,8 @@ const DICT = {
     'projects.views': 'مشاهدة',
     'projects.back': '← عودة للمشاريع',
 
+    'units.title': 'الوحدات المتاحة',
+
     'about.kicker': 'من نحن', 'about.title': 'رحيب المنازل للتطوير العقاري',
     'about.p1': 'نعمل منذ سنوات في تسويق العقارات وربط الملاك بالباحثين عن منزل أو فرصة استثمارية، بأسلوب واضح وموثوق.',
     'about.p2': 'فريقنا يتابع كل عقار من الإدراج حتى إتمام الصفقة، مع حرص دائم على دقة المعلومة وسهولة التواصل.',
@@ -83,6 +85,20 @@ const DICT = {
     'admin.project.save': 'حفظ المشروع',
     'admin.project.added': 'تمت إضافة المشروع بنجاح.',
 
+    'admin.units.title': 'إدارة الوحدات (الأدوار/الشقق)',
+    'admin.units.selectProject': 'اختر المشروع',
+    'admin.units.f.unitNumber': 'رقم الوحدة / الدور',
+    'admin.units.f.area': 'المساحة (م²)',
+    'admin.units.f.bedrooms': 'عدد الغرف',
+    'admin.units.f.price': 'السعر (ريال)',
+    'admin.units.f.status': 'الحالة',
+    'admin.units.f.images': 'صور الوحدة (اختياري)',
+    'admin.units.save': 'حفظ الوحدة',
+    'admin.units.added': 'تمت إضافة الوحدة بنجاح.',
+    'admin.units.list.title': 'الوحدات الحالية',
+    'admin.units.empty': 'لا توجد وحدات بعد',
+    'admin.units.confirmDelete': 'حذف هذه الوحدة؟',
+
     'admin.edit': 'تعديل',
     'admin.editTitle': 'تعديل المشروع',
     'admin.saveChanges': 'حفظ التعديلات',
@@ -127,6 +143,8 @@ const DICT = {
     'projects.area': 'Area',
     'projects.views': 'views',
     'projects.back': '← Back to projects',
+
+    'units.title': 'Available Units',
 
     'about.kicker': 'About us', 'about.title': 'Raheeb Al-Manazil Real Estate Development',
     'about.p1': 'For years we have connected owners with people looking for a home or investment opportunity, with a clear and reliable approach.',
@@ -179,6 +197,20 @@ const DICT = {
     'admin.project.f.descEn': 'Short description (English)',
     'admin.project.save': 'Save project',
     'admin.project.added': 'Project added successfully.',
+
+    'admin.units.title': 'Manage Units (Floors/Apartments)',
+    'admin.units.selectProject': 'Select Project',
+    'admin.units.f.unitNumber': 'Unit / Floor Number',
+    'admin.units.f.area': 'Area (sqm)',
+    'admin.units.f.bedrooms': 'Bedrooms',
+    'admin.units.f.price': 'Price (SAR)',
+    'admin.units.f.status': 'Status',
+    'admin.units.f.images': 'Unit images (optional)',
+    'admin.units.save': 'Save Unit',
+    'admin.units.added': 'Unit added successfully.',
+    'admin.units.list.title': 'Current Units',
+    'admin.units.empty': 'No units yet',
+    'admin.units.confirmDelete': 'Delete this unit?',
 
     'admin.edit': 'Edit',
     'admin.editTitle': 'Edit Project',
