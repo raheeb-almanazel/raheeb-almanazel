@@ -40,7 +40,7 @@ async function getProjects(){
       type: p.type, floors: p.floors,
       locationAr: p.location_ar, locationEn: p.location_en,
       stage: p.stage,
-      price: p.price || 0, area: p.area || 0,
+      area: p.area || 0,
       cover: p.cover || '',
       images: p.images ? p.images.split('\n').filter(s => s.trim()) : [],
       descAr: p.desc_ar, descEn: p.desc_en,
@@ -61,7 +61,6 @@ async function addProject(project){
       floors: project.floors,
       location_ar: project.locationAr, location_en: project.locationEn,
       stage: project.stage,
-      price: project.price || 0,
       area: project.area || 0,
       cover: project.cover || '',
       images: Array.isArray(project.images) ? project.images.join('\n') : (project.images || ''),
@@ -135,7 +134,6 @@ async function updateProject(id, updates){
     if(updates.locationAr !== undefined) row.location_ar = updates.locationAr;
     if(updates.locationEn !== undefined) row.location_en = updates.locationEn;
     if(updates.stage !== undefined) row.stage = updates.stage;
-    if(updates.price !== undefined) row.price = updates.price;
     if(updates.area !== undefined) row.area = updates.area;
     if(updates.cover !== undefined) row.cover = updates.cover;
     if(updates.images !== undefined) row.images = Array.isArray(updates.images) ? updates.images.join('\n') : updates.images;
@@ -179,6 +177,7 @@ async function getUnitsByProject(projectId){
       id: u.id,
       projectId: u.project_id,
       unitNumber: u.unit_number,
+      type: u.type || 'floor',
       area: u.area || 0,
       bedrooms: u.bedrooms || 0,
       price: u.price || 0,
@@ -213,6 +212,7 @@ async function getUnitById(id){
       id: u.id,
       projectId: u.project_id,
       unitNumber: u.unit_number,
+      type: u.type || 'floor',
       area: u.area || 0,
       bedrooms: u.bedrooms || 0,
       price: u.price || 0,
@@ -236,6 +236,7 @@ async function addUnit(unit){
     const row = {
       project_id: unit.projectId,
       unit_number: unit.unitNumber,
+      type: unit.type || 'floor',
       area: unit.area || 0,
       bedrooms: unit.bedrooms || 0,
       price: unit.price || 0,
@@ -260,6 +261,7 @@ async function updateUnit(id, updates){
   try{
     const row = {};
     if(updates.unitNumber !== undefined) row.unit_number = updates.unitNumber;
+    if(updates.type !== undefined) row.type = updates.type;
     if(updates.area !== undefined) row.area = updates.area;
     if(updates.bedrooms !== undefined) row.bedrooms = updates.bedrooms;
     if(updates.price !== undefined) row.price = updates.price;
