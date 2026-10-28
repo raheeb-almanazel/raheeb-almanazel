@@ -183,11 +183,51 @@ async function getUnitsByProject(projectId){
       bedrooms: u.bedrooms || 0,
       price: u.price || 0,
       status: u.status || 'available',
-      images: u.images ? u.images.split('\n').filter(s => s.trim()) : []
+      images: u.images ? u.images.split('\n').filter(s => s.trim()) : [],
+      majlis: u.majlis || 0,
+      livingRoom: u.living_room || 0,
+      kitchen: u.kitchen || 0,
+      bathrooms: u.bathrooms || 0,
+      maidRoom: u.maid_room || 0,
+      laundryRoom: u.laundry_room || 0
     }));
   }catch(e){
     console.error('getUnitsByProject:', e);
     return [];
+  }
+}
+
+async function getUnitById(id){
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/units?id=eq.${id}&select=*`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+    if(!res.ok) throw new Error('فشل في جلب الوحدة');
+    const data = await res.json();
+    if(!data.length) return null;
+    const u = data[0];
+    return {
+      id: u.id,
+      projectId: u.project_id,
+      unitNumber: u.unit_number,
+      area: u.area || 0,
+      bedrooms: u.bedrooms || 0,
+      price: u.price || 0,
+      status: u.status || 'available',
+      images: u.images ? u.images.split('\n').filter(s => s.trim()) : [],
+      majlis: u.majlis || 0,
+      livingRoom: u.living_room || 0,
+      kitchen: u.kitchen || 0,
+      bathrooms: u.bathrooms || 0,
+      maidRoom: u.maid_room || 0,
+      laundryRoom: u.laundry_room || 0
+    };
+  }catch(e){
+    console.error('getUnitById:', e);
+    return null;
   }
 }
 
@@ -200,12 +240,52 @@ async function addUnit(unit){
       bedrooms: unit.bedrooms || 0,
       price: unit.price || 0,
       status: unit.status || 'available',
-      images: Array.isArray(unit.images) ? unit.images.join('\n') : (unit.images || '')
+      images: Array.isArray(unit.images) ? unit.images.join('\n') : (unit.images || ''),
+      majlis: unit.majlis || 0,
+      living_room: unit.livingRoom || 0,
+      kitchen: unit.kitchen || 0,
+      bathrooms: unit.bathrooms || 0,
+      maid_room: unit.maidRoom || 0,
+      laundry_room: unit.laundryRoom || 0
     };
     const result = await sbInsert('units', row);
     return result;
   }catch(e){
     console.error('addUnit:', e);
+    throw e;
+  }
+}
+
+async function updateUnit(id, updates){
+  try{
+    const row = {};
+    if(updates.unitNumber !== undefined) row.unit_number = updates.unitNumber;
+    if(updates.area !== undefined) row.area = updates.area;
+    if(updates.bedrooms !== undefined) row.bedrooms = updates.bedrooms;
+    if(updates.price !== undefined) row.price = updates.price;
+    if(updates.status !== undefined) row.status = updates.status;
+    if(updates.images !== undefined) row.images = Array.isArray(updates.images) ? updates.images.join('\n') : updates.images;
+    if(updates.majlis !== undefined) row.majlis = updates.majlis;
+    if(updates.livingRoom !== undefined) row.living_room = updates.livingRoom;
+    if(updates.kitchen !== undefined) row.kitchen = updates.kitchen;
+    if(updates.bathrooms !== undefined) row.bathrooms = updates.bathrooms;
+    if(updates.maidRoom !== undefined) row.maid_room = updates.maidRoom;
+    if(updates.laundryRoom !== undefined) row.laundry_room = updates.laundryRoom;
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/units?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(row)
+    });
+    if(!res.ok) throw new Error('فشل في التعديل');
+    return await res.json();
+  }catch(e){
+    console.error('updateUnit:', e);
     throw e;
   }
 }
