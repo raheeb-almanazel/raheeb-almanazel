@@ -166,6 +166,14 @@
             <input type="text" name="unitNumber" required>
           </div>
           <div class="field">
+            <label data-i18n="admin.units.f.type">النوع</label>
+            <select name="type" required>
+              <option value="villa">فيلا</option>
+              <option value="apartment">شقة</option>
+              <option value="floor">أدوار</option>
+            </select>
+          </div>
+          <div class="field">
             <label data-i18n="admin.units.f.area">المساحة (م²)</label>
             <input type="number" name="area" min="0" value="0">
           </div>
@@ -185,7 +193,6 @@
               <option value="sold">مباعة</option>
             </select>
           </div>
-          <div class="field"></div>
 
           <!-- تفاصيل الوحدة -->
           <div class="field">
