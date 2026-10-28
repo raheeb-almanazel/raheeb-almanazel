@@ -184,7 +184,7 @@ async function renderProjects(){
   el.innerHTML = list.map(pr => projectCardHTML(pr, lang)).join('');
 }
 
-/* ---------- تفاصيل مشروع ---------- */
+/* ---------- تفاصيل مشروع (مع الوحدات) ---------- */
 async function renderProjectDetail(){
   const root = document.getElementById('projectDetailRoot');
   if(!root) return;
@@ -208,7 +208,7 @@ async function renderProjectDetail(){
     return;
   }
 
-  function draw(){
+  async function draw(){
     const lang = getLang();
     const name = lang === 'ar' ? pr.nameAr : pr.nameEn;
     const loc = lang === 'ar' ? pr.locationAr : pr.locationEn;
@@ -227,6 +227,41 @@ async function renderProjectDetail(){
     const areaHTML = pr.area > 0 ? `<div class="fact"><b>${pr.area}</b><span>${t('projects.area')} (${t('detail.sqm')})</span></div>` : '';
     const viewsHTML = `<div class="fact"><b>${pr.views || 0}</b><span>${t('projects.views')}</span></div>`;
 
+    // جلب الوحدات
+    const units = await getUnitsByProject(pr.id);
+    let unitsHTML = '';
+    if(units.length){
+      unitsHTML = `
+        <div class="project-units" style="margin-top:40px;">
+          <h2 style="margin-bottom:20px;">${t('units.title')}</h2>
+          <div class="units-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:16px;">
+            ${units.map(u => {
+              const statusLabel = getUnitStatusLabel(u.status, lang);
+              const statusColor = u.status === 'sold' ? '#B3402F' : (u.status === 'reserved' ? '#C9A455' : '#1E3A34');
+              return `
+                <div class="unit-card" style="background:var(--bg-alt); border:1px solid var(--line); border-radius:6px; padding:16px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h4 style="margin:0; font-size:1.1rem;">${u.unitNumber}</h4>
+                    <span style="background:${statusColor}; color:#fff; font-size:.7rem; padding:3px 10px; border-radius:12px;">${statusLabel}</span>
+                  </div>
+                  <div style="font-size:.88rem; color:var(--ink-soft); line-height:1.8;">
+                    ${u.area > 0 ? `<div>📐 ${u.area} ${t('card.area')}</div>` : ''}
+                    ${u.bedrooms > 0 ? `<div>🛏️ ${u.bedrooms} ${t('card.bedrooms')}</div>` : ''}
+                    ${u.price > 0 ? `<div style="color:var(--gold-deep); font-weight:600; font-size:1rem; margin-top:8px;">${formatPrice(u.price, lang)}</div>` : ''}
+                  </div>
+                  ${u.images && u.images.length ? `
+                    <div style="display:flex; gap:6px; margin-top:12px; overflow-x:auto;">
+                      ${u.images.map(img => `<img src="${img}" style="width:60px; height:60px; object-fit:cover; border-radius:4px; border:1px solid var(--line);">`).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     root.innerHTML = `
       <a class="card-link" href="index.html#projects" style="margin-bottom:20px;">${t('projects.back')}</a>
       <div class="project-detail-head mt-lg">
@@ -242,11 +277,12 @@ async function renderProjectDetail(){
       ${galleryHTML}
       ${priceHTML}
       ${desc ? `<p class="project-desc">${desc}</p>` : ''}
+      ${unitsHTML}
       <div style="margin-top:30px;">
         <a class="btn" href="contact.html">${t('detail.request')}</a>
       </div>`;
   }
-  draw();
+  await draw();
   document.addEventListener('langchange', draw);
 }
 
@@ -284,11 +320,17 @@ async function initAdmin(){
   const heroListEl = document.getElementById('heroList');
   const heroAddedMsg = document.getElementById('heroAdded');
 
+  const unitsProjectSelect = document.getElementById('unitsProjectSelect');
+  const unitForm = document.getElementById('adminUnitForm');
+  const unitsListEl = document.getElementById('adminUnitsList');
+  const unitAddedMsg = document.getElementById('adminUnitAdded');
+
   async function showPanel(){
     gate.classList.add('hide');
     panel.classList.remove('hide');
     await renderProjectList();
     await renderHeroList();
+    await renderProjectsDropdown();
   }
 
   if(sessionStorage.getItem('raheeb_admin_ok') === '1') await showPanel();
@@ -400,6 +442,106 @@ async function initAdmin(){
         await renderHeroList();
       }catch(err){
         alert('فشل الرفع: ' + err.message);
+      }finally{
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
+    });
+  }
+
+  /* ============ دوال الوحدات في اللوحة ============ */
+  async function renderProjectsDropdown(){
+    if(!unitsProjectSelect) return;
+    const lang = getLang();
+    const list = await getProjects();
+    unitsProjectSelect.innerHTML = `<option value="">— اختر مشروع —</option>` + 
+      list.map(pr => `<option value="${pr.id}">${lang === 'ar' ? pr.nameAr : pr.nameEn}</option>`).join('');
+  }
+
+  if(unitsProjectSelect){
+    unitsProjectSelect.addEventListener('change', async () => {
+      const pid = unitsProjectSelect.value;
+      if(!pid){
+        unitForm.style.display = 'none';
+        if(unitsListEl) unitsListEl.innerHTML = '';
+        return;
+      }
+      unitForm.style.display = 'grid';
+      await renderUnitsList(pid);
+    });
+  }
+
+  async function renderUnitsList(projectId){
+    if(!unitsListEl) return;
+    const lang = getLang();
+    const units = await getUnitsByProject(projectId);
+    if(!units.length){
+      unitsListEl.innerHTML = `<div class="empty-state"><p>${t('admin.units.empty')}</p></div>`;
+      return;
+    }
+    unitsListEl.innerHTML = units.map(u => `
+      <div class="admin-row">
+        <div class="info">
+          <b>${u.unitNumber}</b>
+          <span>${u.area} م² · ${u.bedrooms} غرف · ${formatPrice(u.price, lang)} · ${getUnitStatusLabel(u.status, lang)}</span>
+        </div>
+        <div class="actions">
+          <button class="danger" data-id="${u.id}">${t('admin.delete')}</button>
+        </div>
+      </div>`).join('');
+
+    unitsListEl.querySelectorAll('button.danger').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if(!confirm(t('admin.units.confirmDelete'))) return;
+        try{
+          await deleteUnit(btn.getAttribute('data-id'));
+          await renderUnitsList(projectId);
+        }catch(e){ alert('فشل الحذف: ' + e.message); }
+      });
+    });
+  }
+
+  if(unitForm){
+    unitForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const pid = unitsProjectSelect.value;
+      if(!pid){ alert('اختر مشروع أولاً'); return; }
+
+      const fd = new FormData(unitForm);
+      const btn = unitForm.querySelector('button[type="submit"]');
+      const origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'جاري الحفظ...';
+
+      try{
+        const unitImages = fd.getAll('unitImages');
+        let imagesArr = [];
+        for(const file of unitImages){
+          if(file.size > 0){
+            const url = await sbUpload(file);
+            imagesArr.push(url);
+          }
+        }
+
+        await addUnit({
+          projectId: Number(pid),
+          unitNumber: fd.get('unitNumber'),
+          area: Number(fd.get('area')) || 0,
+          bedrooms: Number(fd.get('bedrooms')) || 0,
+          price: Number(fd.get('price')) || 0,
+          status: fd.get('status') || 'available',
+          images: imagesArr
+        });
+
+        unitForm.reset();
+        document.getElementById('unitImagesPreview').innerHTML = '';
+        if(unitAddedMsg){
+          unitAddedMsg.classList.remove('hide');
+          setTimeout(() => unitAddedMsg.classList.add('hide'), 3000);
+        }
+        await renderUnitsList(pid);
+      }catch(err){
+        alert('فشل الإضافة: ' + err.message);
       }finally{
         btn.disabled = false;
         btn.textContent = origText;
@@ -561,6 +703,7 @@ async function initAdmin(){
           setTimeout(() => projAddedMsg.classList.add('hide'), 3000);
         }
         await renderProjectList();
+        await renderProjectsDropdown();
       }catch(err){
         alert('فشل الإضافة: ' + err.message);
       }finally{
@@ -574,6 +717,10 @@ async function initAdmin(){
     if(!panel.classList.contains('hide')){
       await renderProjectList();
       await renderHeroList();
+      await renderProjectsDropdown();
+      if(unitsProjectSelect && unitsProjectSelect.value){
+        await renderUnitsList(unitsProjectSelect.value);
+      }
     }
   });
 }
