@@ -1,4 +1,4 @@
-/* بيانات المشاريع + صور الخلفية — Supabase version */
+/* بيانات المشاريع + صور الخلفية + الوحدات — Supabase version */
 
 /* ========== الأنواع ========== */
 const TYPES = [
@@ -13,6 +13,13 @@ const STAGES = [
   { value: 'finishing', ar: 'مرحلة التشطيب',  en: 'Finishing' },
   { value: 'structure', ar: 'مرحلة العظم',    en: 'Structure' },
   { value: 'sold',      ar: 'مباعة',          en: 'Sold' }
+];
+
+/* ========== حالات الوحدة ========== */
+const UNIT_STATUS = [
+  { value: 'available', ar: 'متاحة', en: 'Available' },
+  { value: 'sold',      ar: 'مباعة', en: 'Sold' },
+  { value: 'reserved',  ar: 'محجوزة', en: 'Reserved' }
 ];
 
 /* ========== كاش داخلي ========== */
@@ -155,6 +162,64 @@ async function updateProject(id, updates){
 }
 
 /* =========================================================
+   دوال الوحدات (Units)
+   ========================================================= */
+
+async function getUnitsByProject(projectId){
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/units?project_id=eq.${projectId}&select=*&order=created_at.asc`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+    if(!res.ok) throw new Error('فشل في جلب الوحدات');
+    const data = await res.json();
+    return data.map(u => ({
+      id: u.id,
+      projectId: u.project_id,
+      unitNumber: u.unit_number,
+      area: u.area || 0,
+      bedrooms: u.bedrooms || 0,
+      price: u.price || 0,
+      status: u.status || 'available',
+      images: u.images ? u.images.split('\n').filter(s => s.trim()) : []
+    }));
+  }catch(e){
+    console.error('getUnitsByProject:', e);
+    return [];
+  }
+}
+
+async function addUnit(unit){
+  try{
+    const row = {
+      project_id: unit.projectId,
+      unit_number: unit.unitNumber,
+      area: unit.area || 0,
+      bedrooms: unit.bedrooms || 0,
+      price: unit.price || 0,
+      status: unit.status || 'available',
+      images: Array.isArray(unit.images) ? unit.images.join('\n') : (unit.images || '')
+    };
+    const result = await sbInsert('units', row);
+    return result;
+  }catch(e){
+    console.error('addUnit:', e);
+    throw e;
+  }
+}
+
+async function deleteUnit(id){
+  try{
+    await sbDelete('units', id);
+  }catch(e){
+    console.error('deleteUnit:', e);
+    throw e;
+  }
+}
+
+/* =========================================================
    دوال صور الخلفية (Hero Images)
    ========================================================= */
 
@@ -212,6 +277,12 @@ function getTypeLabel(type, lang){
 function getStageLabel(stage, lang){
   const s = STAGES.find(x => x.value === stage);
   if(!s) return stage;
+  return lang === 'en' ? s.en : s.ar;
+}
+
+function getUnitStatusLabel(status, lang){
+  const s = UNIT_STATUS.find(x => x.value === status);
+  if(!s) return status;
   return lang === 'en' ? s.en : s.ar;
 }
 
