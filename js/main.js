@@ -751,13 +751,166 @@ async function initAdmin(){
   }
 
   function openEditModal(pr){
-    // ... (existing project edit modal code remains the same)
-    // (I'll keep it as it was to avoid making the response too long)
+    const existing = document.getElementById('editModal');
+    if(existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'editModal';
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+      <div class="modal-box">
+        <button class="modal-close" id="modalClose">✕</button>
+        <h2>${t('admin.editTitle')}</h2>
+        <form id="editForm" class="form-grid">
+          <div class="field">
+            <label>${t('admin.project.f.nameAr')}</label>
+            <input type="text" name="nameAr" value="${pr.nameAr || ''}" required>
+          </div>
+          <div class="field">
+            <label>${t('admin.project.f.nameEn')}</label>
+            <input type="text" name="nameEn" value="${pr.nameEn || ''}" required>
+          </div>
+          <div class="field">
+            <label>${t('admin.project.f.type')}</label>
+            <select name="type" required>
+              <option value="villa" ${pr.type === 'villa' ? 'selected' : ''}>فيلا</option>
+              <option value="apartment" ${pr.type === 'apartment' ? 'selected' : ''}>شقة</option>
+              <option value="floor" ${pr.type === 'floor' ? 'selected' : ''}>أدوار</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>${t('admin.project.f.floors')}</label>
+            <input type="number" name="floors" value="${pr.floors || 1}" min="1" required>
+          </div>
+          <div class="field">
+            <label>${t('admin.project.f.locationAr')}</label>
+            <input type="text" name="locationAr" value="${pr.locationAr || ''}" required>
+          </div>
+          <div class="field">
+            <label>${t('admin.project.f.locationEn')}</label>
+            <input type="text" name="locationEn" value="${pr.locationEn || ''}" required>
+          </div>
+          <div class="field">
+            <label>${t('admin.project.f.stage')}</label>
+            <select name="stage" required>
+              <option value="sale" ${pr.stage === 'sale' ? 'selected' : ''}>مرحلة البيع</option>
+              <option value="finishing" ${pr.stage === 'finishing' ? 'selected' : ''}>مرحلة التشطيب</option>
+              <option value="structure" ${pr.stage === 'structure' ? 'selected' : ''}>مرحلة العظم</option>
+              <option value="sold" ${pr.stage === 'sold' ? 'selected' : ''}>مباعة</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>${t('admin.project.f.price')}</label>
+            <input type="number" name="price" value="${pr.price || 0}" min="0">
+          </div>
+          <div class="field">
+            <label>${t('admin.project.f.area')}</label>
+            <input type="number" name="area" value="${pr.area || 0}" min="0">
+          </div>
+          <div class="field"></div>
+          <div class="field full">
+            <label>${t('admin.project.f.descAr')}</label>
+            <textarea name="descAr">${pr.descAr || ''}</textarea>
+          </div>
+          <div class="field full">
+            <label>${t('admin.project.f.descEn')}</label>
+            <textarea name="descEn">${pr.descEn || ''}</textarea>
+          </div>
+          <div class="field full" style="display:flex; gap:10px;">
+            <button type="submit" class="btn">${t('admin.saveChanges')}</button>
+            <button type="button" class="btn ghost" id="modalCancel">${t('admin.cancel')}</button>
+          </div>
+        </form>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    const close = () => modal.remove();
+    document.getElementById('modalClose').addEventListener('click', close);
+    document.getElementById('modalCancel').addEventListener('click', close);
+    modal.addEventListener('click', (e) => { if(e.target === modal) close(); });
+
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      try{
+        await updateProject(pr.id, {
+          nameAr: fd.get('nameAr'), nameEn: fd.get('nameEn'),
+          type: fd.get('type'),
+          floors: Number(fd.get('floors')),
+          locationAr: fd.get('locationAr'), locationEn: fd.get('locationEn'),
+          stage: fd.get('stage'),
+          price: Number(fd.get('price')) || 0,
+          area: Number(fd.get('area')) || 0,
+          descAr: fd.get('descAr') || '', descEn: fd.get('descEn') || ''
+        });
+        close();
+        await renderProjectList();
+        alert(t('admin.savedSuccess'));
+      }catch(err){
+        alert('فشل التعديل: ' + err.message);
+      }
+    });
   }
 
   if(projForm){
     projForm.addEventListener('submit', async e => {
-      // ... (existing project add code remains the same)
+      e.preventDefault();
+      const fd = new FormData(projForm);
+
+      const coverFile = fd.get('coverFile');
+      const galleryFiles = fd.getAll('galleryFiles');
+
+      const btn = projForm.querySelector('button[type="submit"]');
+      const origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'جاري الرفع...';
+
+      try{
+        let coverUrl = '';
+        let imagesArr = [];
+
+        if(coverFile && coverFile.size > 0){
+          coverUrl = await sbUpload(coverFile);
+        }
+
+        if(galleryFiles && galleryFiles.length > 0){
+          for(const file of galleryFiles){
+            if(file.size > 0){
+              const url = await sbUpload(file);
+              imagesArr.push(url);
+            }
+          }
+        }
+
+        await addProject({
+          nameAr: fd.get('nameAr'), nameEn: fd.get('nameEn'),
+          type: fd.get('type'),
+          floors: Number(fd.get('floors')),
+          locationAr: fd.get('locationAr'), locationEn: fd.get('locationEn'),
+          stage: fd.get('stage'),
+          price: Number(fd.get('price')) || 0,
+          area: Number(fd.get('area')) || 0,
+          cover: coverUrl,
+          images: imagesArr,
+          descAr: fd.get('descAr') || '', descEn: fd.get('descEn') || ''
+        });
+
+        projForm.reset();
+        document.getElementById('coverPreview').innerHTML = '';
+        document.getElementById('galleryPreview').innerHTML = '';
+        if(projAddedMsg){
+          projAddedMsg.classList.remove('hide');
+          setTimeout(() => projAddedMsg.classList.add('hide'), 3000);
+        }
+        await renderProjectList();
+        await renderProjectsDropdown();
+      }catch(err){
+        alert('فشل الإضافة: ' + err.message);
+      }finally{
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
     });
   }
 
