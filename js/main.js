@@ -579,6 +579,14 @@ async function initAdmin(){
             <input type="text" name="unitNumber" value="${u.unitNumber || ''}" required>
           </div>
           <div class="field">
+            <label>${t('admin.units.f.type')}</label>
+            <select name="type" required>
+              <option value="villa" ${u.type === 'villa' ? 'selected' : ''}>فيلا</option>
+              <option value="apartment" ${u.type === 'apartment' ? 'selected' : ''}>شقة</option>
+              <option value="floor" ${u.type === 'floor' ? 'selected' : ''}>أدوار</option>
+            </select>
+          </div>
+          <div class="field">
             <label>${t('admin.units.f.area')}</label>
             <input type="number" name="area" value="${u.area || 0}" min="0">
           </div>
@@ -598,7 +606,6 @@ async function initAdmin(){
               <option value="sold" ${u.status === 'sold' ? 'selected' : ''}>مباعة</option>
             </select>
           </div>
-          <div class="field"></div>
 
           <div class="field">
             <label>${t('unit.bathrooms')}</label>
@@ -666,6 +673,7 @@ async function initAdmin(){
 
         await updateUnit(u.id, {
           unitNumber: fd.get('unitNumber'),
+          type: fd.get('type'),
           area: Number(fd.get('area')) || 0,
           bedrooms: Number(fd.get('bedrooms')) || 0,
           price: Number(fd.get('price')) || 0,
@@ -716,6 +724,7 @@ async function initAdmin(){
         await addUnit({
           projectId: Number(pid),
           unitNumber: fd.get('unitNumber'),
+          type: fd.get('type'),
           area: Number(fd.get('area')) || 0,
           bedrooms: Number(fd.get('bedrooms')) || 0,
           price: Number(fd.get('price')) || 0,
