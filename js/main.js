@@ -140,8 +140,6 @@ function projectCardHTML(pr, lang){
     ? `<img src="${pr.cover}" alt="${name}" class="card-cover">`
     : iconFor(pr.type);
 
-  const priceLine = pr.price > 0
-    ? `<div class="card-price">${formatPrice(pr.price, lang)}</div>` : '';
   const areaLine = pr.area > 0
     ? `<span>${pr.area} ${t('card.area')}</span>` : '';
 
@@ -169,7 +167,6 @@ function projectCardHTML(pr, lang){
         ${areaLine}
         ${viewsHTML}
       </div>
-      ${priceLine}
       <a class="card-link" href="project.html?id=${pr.id}">${t('card.details')}</a>
     </div>
   </article>`;
@@ -223,7 +220,6 @@ async function renderProjectDetail(){
       ? `<div class="project-gallery">${allImages.map(img => `<img src="${img}" alt="${name}" loading="lazy">`).join('')}</div>`
       : `<div class="detail-media">${iconFor(pr.type)}</div>`;
 
-    const priceHTML = pr.price > 0 ? `<div class="project-price">${formatPrice(pr.price, lang)}</div>` : '';
     const areaHTML = pr.area > 0 ? `<div class="fact"><b>${pr.area}</b><span>${t('projects.area')} (${t('detail.sqm')})</span></div>` : '';
     const viewsHTML = `<div class="fact"><b>${pr.views || 0}</b><span>${t('projects.views')}</span></div>`;
 
@@ -279,7 +275,6 @@ async function renderProjectDetail(){
         ${viewsHTML}
       </div>
       ${galleryHTML}
-      ${priceHTML}
       ${desc ? `<p class="project-desc">${desc}</p>` : ''}
       ${unitsHTML}
       <div style="margin-top:30px;">
@@ -800,10 +795,6 @@ async function initAdmin(){
             </select>
           </div>
           <div class="field">
-            <label>${t('admin.project.f.price')}</label>
-            <input type="number" name="price" value="${pr.price || 0}" min="0">
-          </div>
-          <div class="field">
             <label>${t('admin.project.f.area')}</label>
             <input type="number" name="area" value="${pr.area || 0}" min="0">
           </div>
@@ -840,7 +831,6 @@ async function initAdmin(){
           floors: Number(fd.get('floors')),
           locationAr: fd.get('locationAr'), locationEn: fd.get('locationEn'),
           stage: fd.get('stage'),
-          price: Number(fd.get('price')) || 0,
           area: Number(fd.get('area')) || 0,
           descAr: fd.get('descAr') || '', descEn: fd.get('descEn') || ''
         });
@@ -889,7 +879,6 @@ async function initAdmin(){
           floors: Number(fd.get('floors')),
           locationAr: fd.get('locationAr'), locationEn: fd.get('locationEn'),
           stage: fd.get('stage'),
-          price: Number(fd.get('price')) || 0,
           area: Number(fd.get('area')) || 0,
           cover: coverUrl,
           images: imagesArr,
