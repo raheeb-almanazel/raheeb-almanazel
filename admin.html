@@ -151,6 +151,65 @@
         </div>
       </section>
 
+      <!-- ========== قسم الوحدات ========== -->
+      <section class="admin-block mt-lg">
+        <h2 data-i18n="admin.units.title">إدارة الوحدات (الأدوار/الشقق)</h2>
+
+        <!-- اختيار المشروع -->
+        <div class="field full" style="margin-bottom:20px;">
+          <label data-i18n="admin.units.selectProject">اختر المشروع</label>
+          <select id="unitsProjectSelect">
+            <option value="">— اختر مشروع —</option>
+          </select>
+        </div>
+
+        <!-- نموذج إضافة وحدة -->
+        <form id="adminUnitForm" class="form-grid" style="display:none;">
+          <div class="field">
+            <label data-i18n="admin.units.f.unitNumber">رقم الوحدة / الدور</label>
+            <input type="text" name="unitNumber" required>
+          </div>
+          <div class="field">
+            <label data-i18n="admin.units.f.area">المساحة (م²)</label>
+            <input type="number" name="area" min="0" value="0">
+          </div>
+          <div class="field">
+            <label data-i18n="admin.units.f.bedrooms">عدد الغرف</label>
+            <input type="number" name="bedrooms" min="0" value="0">
+          </div>
+          <div class="field">
+            <label data-i18n="admin.units.f.price">السعر (ريال)</label>
+            <input type="number" name="price" min="0" value="0">
+          </div>
+          <div class="field">
+            <label data-i18n="admin.units.f.status">الحالة</label>
+            <select name="status">
+              <option value="available">متاحة</option>
+              <option value="reserved">محجوزة</option>
+              <option value="sold">مباعة</option>
+            </select>
+          </div>
+          <div class="field"></div>
+
+          <div class="field full">
+            <label data-i18n="admin.units.f.images">صور الوحدة (اختياري)</label>
+            <input type="file" name="unitImages" accept="image/*" multiple id="unitImagesInput">
+            <div id="unitImagesPreview" class="upload-preview"></div>
+          </div>
+
+          <div class="field full">
+            <button type="submit" class="btn" data-i18n="admin.units.save">حفظ الوحدة</button>
+            <p id="adminUnitAdded" class="admin-note hide" style="margin-top:14px;" data-i18n="admin.units.added">تمت إضافة الوحدة بنجاح.</p>
+          </div>
+        </form>
+
+        <!-- قائمة الوحدات -->
+        <div class="admin-list" style="margin-top:30px;">
+          <h3 data-i18n="admin.units.list.title">الوحدات الحالية</h3>
+          <div id="adminUnitsList" class="mt-lg"></div>
+        </div>
+      </section>
+
     </div>
 
   </div>
@@ -186,6 +245,7 @@
     bindPreview('coverFileInput', 'coverPreview');
     bindPreview('galleryFilesInput', 'galleryPreview');
     bindPreview('heroFilesInput', 'heroPreview');
+    bindPreview('unitImagesInput', 'unitImagesPreview');
   });
 </script>
 
