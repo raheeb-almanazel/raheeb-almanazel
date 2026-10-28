@@ -32,6 +32,14 @@ const DICT = {
     'projects.back': '← عودة للمشاريع',
 
     'units.title': 'الوحدات المتاحة',
+    'unit.bedrooms': 'غرف نوم',
+    'unit.bathrooms': 'دورات المياه',
+    'unit.majlis': 'مجالس',
+    'unit.livingRoom': 'صالات',
+    'unit.kitchen': 'مطابخ',
+    'unit.maidRoom': 'غرف العاملة',
+    'unit.laundryRoom': 'غرف الغسيل',
+    'unit.view': 'عرض التفاصيل',
 
     'about.kicker': 'من نحن', 'about.title': 'رحيب المنازل للتطوير العقاري',
     'about.p1': 'نعمل منذ سنوات في تسويق العقارات وربط الملاك بالباحثين عن منزل أو فرصة استثمارية، بأسلوب واضح وموثوق.',
@@ -101,6 +109,7 @@ const DICT = {
 
     'admin.edit': 'تعديل',
     'admin.editTitle': 'تعديل المشروع',
+    'admin.editUnitTitle': 'تعديل الوحدة',
     'admin.saveChanges': 'حفظ التعديلات',
     'admin.cancel': 'إلغاء',
     'admin.confirmDelete': 'هل تريد حذف هذا المشروع؟',
@@ -145,6 +154,14 @@ const DICT = {
     'projects.back': '← Back to projects',
 
     'units.title': 'Available Units',
+    'unit.bedrooms': 'Bedrooms',
+    'unit.bathrooms': 'Bathrooms',
+    'unit.majlis': 'Majlis',
+    'unit.livingRoom': 'Living Rooms',
+    'unit.kitchen': 'Kitchens',
+    'unit.maidRoom': 'Maid Rooms',
+    'unit.laundryRoom': 'Laundry Rooms',
+    'unit.view': 'View Details',
 
     'about.kicker': 'About us', 'about.title': 'Raheeb Al-Manazil Real Estate Development',
     'about.p1': 'For years we have connected owners with people looking for a home or investment opportunity, with a clear and reliable approach.',
@@ -214,6 +231,7 @@ const DICT = {
 
     'admin.edit': 'Edit',
     'admin.editTitle': 'Edit Project',
+    'admin.editUnitTitle': 'Edit Unit',
     'admin.saveChanges': 'Save Changes',
     'admin.cancel': 'Cancel',
     'admin.confirmDelete': 'Delete this project?',
